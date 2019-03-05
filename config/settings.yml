@@ -4,6 +4,13 @@ plugins:
   voting_enabled:
     default: true
     client: true
+  voting_limit_to_groups:
+    default: false
+    client: true
+  voting_groups:
+    type: list
+    client: true
+    default: ""
   voting_show_who_voted:
     default: true
     client: true

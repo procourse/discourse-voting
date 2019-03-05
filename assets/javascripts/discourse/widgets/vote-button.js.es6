@@ -58,6 +58,17 @@ export default createWidget("vote-button", {
       $.cookie("destination_url", window.location.href);
       return;
     }
+    if (this.siteSettings.voting_limit_to_groups) {
+      const votingGroups = this.siteSettings.voting_groups;
+      let userGroups;
+      if (this.currentUser && this.currentUser.groups) {
+        userGroups = this.currentUser.groups.map(group => group.name);
+      }
+      if (!userGroups.some(group => votingGroups.includes(group))) {
+	bootbox.alert("You are not a member of the voting group.");
+        return;
+      } 
+    }
     if (
       !this.attrs.closed &&
       this.parentWidget.state.allowClick &&
