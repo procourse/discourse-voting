@@ -19,7 +19,7 @@ module DiscourseVoting
 
       voted = false
 
-      unless current_user.reached_voting_limit?
+      unless current_user.reached_voting_limit? && current_user.voting_group_member?
 
         current_user.custom_fields[DiscourseVoting::VOTES] = current_user.votes.dup.push(topic_id).uniq
         current_user.save!
@@ -33,7 +33,7 @@ module DiscourseVoting
         vote_limit: current_user.vote_limit,
         vote_count: topic.custom_fields[DiscourseVoting::VOTE_COUNT].to_i,
         who_voted: who_voted(topic),
-        alert:  current_user.alert_low_votes?,
+        alert: current_user.alert_low_votes?,
         votes_left: [(current_user.vote_limit - current_user.vote_count), 0].max
       }
 

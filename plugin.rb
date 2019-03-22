@@ -128,6 +128,20 @@ after_initialize do
       (vote_limit - vote_count) <= SiteSetting.voting_alert_votes_left
     end
 
+    def voting_group_member?
+      if SiteSetting.voting_limit_to_groups && !SiteSetting.voting_groups.nil?
+        group_list = SiteSetting.voting_groups.split('|')
+        group_list.map!(&:downcase)
+        if self.groups.any? { |group| group_list.include?(group.name.downcase) }
+          return true
+        else
+          return false
+        end
+      else
+        return true
+      end
+    end
+
     def votes
       votes = self.custom_fields[DiscourseVoting::VOTES] || []
       # "" can be in there sometimes, it gets turned into a 0
@@ -153,10 +167,14 @@ after_initialize do
 
   require_dependency 'current_user_serializer'
   class ::CurrentUserSerializer
-    attributes :votes_exceeded,  :vote_count
+    attributes :votes_exceeded, :voting_group_member, :vote_count
 
     def votes_exceeded
       object.reached_voting_limit?
+    end
+
+    def voting_group_member
+      object.voting_group_member?
     end
 
     def vote_count

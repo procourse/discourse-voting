@@ -21,7 +21,11 @@ export default createWidget("vote-box", {
     var voteCount = this.attach("vote-count", attrs);
     var voteButton = this.attach("vote-button", attrs);
     var voteOptions = this.attach("vote-options", attrs);
-    let contents = [voteCount, voteButton, voteOptions];
+    
+    let contents = [voteCount];
+    if (this.currentUser.voting_group_member) {
+      contents.push([voteButton, voteOptions]);
+    }
 
     if (state.votesAlert > 0) {
       const html =
